@@ -40,7 +40,10 @@ INSTALLED_APPS = [
 
     'rest_framework', 
     'rest_framework_simplejwt',
-    'rest_framework_simplejwt.token_blacklist'
+    'rest_framework_simplejwt.token_blacklist',
+
+    'account',
+    'base'
 ]
 
 MIDDLEWARE = [
@@ -148,3 +151,6 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,    
     'BLACKLIST_AFTER_ROTATION': True, 
 }
+
+
+AUTH_USER_MODEL = 'account.ProfileUser'
