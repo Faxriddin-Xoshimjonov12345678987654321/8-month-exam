@@ -1,7 +1,9 @@
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
+from rest_framework import status
 from rest_framework import permissions
 from rest_framework.exceptions import ValidationError
+from rest_framework.views import APIView
 from .serializers import SignUpSerializer, VerifySerializer, AccountSerializer, IncomeSerializer, ExpenseSerializer
 from .models import ProfileUser, Verify, NEW, DONE
 from datetime import datetime
@@ -47,6 +49,26 @@ class VerifyView(GenericAPIView):
             'message': 'Kod muvaffaqiyatli tasdiqlandi!',
             'auth_status': user.auth_status
         })
+
+
+class AccountCreateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        serializer = AccountSerializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class AccountList(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        accounts = request.user.accounts.all()
+        serializer = AccountSerializer(accounts, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 
