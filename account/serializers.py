@@ -22,6 +22,7 @@ class SignUpSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         user_input = attrs.get('email_or_phone_number')
+        username = attrs.get('username')
 
         user = ProfileUser.objects.filter(Q(phone_number=user_input) | Q(email=user_input)).first()
 
@@ -36,13 +37,16 @@ class SignUpSerializer(serializers.ModelSerializer):
         if user_input_tupe == 'email':
             data = {
                 'email': user_input,
-                'auth_type': VIA_EMAIL
+                'auth_type': VIA_EMAIL, 
+                'username': username
             }
 
         elif user_input_tupe == 'phone':
             data = {
                 'phone': user_input,
-                'auth_type': VIA_PHONE
+                'auth_type': VIA_PHONE,
+                'username': username
+
             }
 
         else:
@@ -82,8 +86,43 @@ class SignUpSerializer(serializers.ModelSerializer):
         }
 
 
+class UpdateUserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True)
+    confirm_password = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = ProfileUser
+        fields = ['username', 'password', 'confirm_password']
+
+    def validate(self, attrs):
+        password = attrs.get('password')
+        confirm_password = attrs.get('confirm_password')
+
+        if not password or not confirm_password:
+            raise ValidationError('Parol va tasdiqlash paroli kiritilishi shart!')
+
+        if password != confirm_password:
+            raise ValidationError('Parollar mos emas')
+
+        return attrs
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password')
+        validated_data.pop('confirm_password')
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        if password:
+            instance.set_password(password)
+
+        instance.save()
+        return instance
+
+
+
 class VerifySerializer(serializers.Serializer):
-    code = serializers.CharField(max_leng=4, required=True)
+    code = serializers.CharField(max_length=4, required=True)
 
 
 class AccountSerializer(serializers.ModelSerializer):
@@ -99,7 +138,7 @@ class AccountSerializer(serializers.ModelSerializer):
 
 
 class IncomeSerializer(serializers.ModelSerializer):
-    class Mete:
+    class Meta:
         model = Kirimlar
         fields = ['id', 'account', 'title', 'amount', 'description', 'created_at', 'update_at']
         read_only_fields = ['id', 'created_at', 'update_at']

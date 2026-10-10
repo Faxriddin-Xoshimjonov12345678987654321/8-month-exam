@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework import permissions
 from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
-from .serializers import SignUpSerializer, VerifySerializer, AccountSerializer, IncomeSerializer, ExpenseSerializer
+from .serializers import SignUpSerializer, VerifySerializer, AccountSerializer, IncomeSerializer, ExpenseSerializer, UpdateUserSerializer
 from .models import ProfileUser, Verify, NEW, DONE
 from datetime import datetime
 # Create your views here.
@@ -37,9 +37,9 @@ class VerifyView(GenericAPIView):
         if not verifies.exists():
             raise ValidationError('Tasdiqlash kodi xato yoki yaroqsiz')
 
-        verifies.first()
-        verifies.used = True
-        verifies.save()
+        verify = verifies.first()
+        verify.used = True
+        verify.save()  
 
         if user.auth_status == NEW:
             user.auth_status = DONE
@@ -48,6 +48,23 @@ class VerifyView(GenericAPIView):
         return Response({
             'message': 'Kod muvaffaqiyatli tasdiqlandi!',
             'auth_status': user.auth_status
+        })
+
+
+class UpdateUserView(GenericAPIView):
+    serializer_class = UpdateUserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def put(self, reqeust):
+        user = reqeust.user 
+        serializer = self.get_serializer(user, data=reqeust.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+
+        return Response({
+                'message': 'Siz muvaffaqaiyatli royxatdan otdingiz',
+                'auth_status': user.auth_status
         })
 
 

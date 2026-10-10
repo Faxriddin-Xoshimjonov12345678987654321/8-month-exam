@@ -86,6 +86,8 @@ class ProfileUser(AbstractUser):
             verify_type=verify_type
         )
 
+        return code
+
 
     def save(self, *args, **kwargs):
         self.check_username()

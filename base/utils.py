@@ -1,5 +1,5 @@
 from rest_framework.exceptions import ValidationError
-from django.contrib import settings
+from django.conf import settings
 from django.core.mail import send_mail
 
 import re
