@@ -162,3 +162,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'xoshimjonovfaxriddin5@gmail.com'
 EMAIL_HOST_PASSWORD = 'zndh jsog fgne nucq'
+
+
+EMAIL_EXPIRE_TIME =3
+PHONE_EXPIRE_TIME =2

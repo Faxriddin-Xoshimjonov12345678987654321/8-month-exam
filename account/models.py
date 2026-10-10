@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from conf.settings import EMAIL_EXPIRE_TIME, PHONE_EXPIRE_TIME
+from base.models import BaseModel
+from datetime import datetime, timedelta
 import uuid
 import random
 
@@ -74,10 +77,76 @@ class ProfileUser(AbstractUser):
             'access': str(refresh.access_token)
         }
 
+    def generate_code(self, verify_type):
+        code = random.randint(1000, 9999)
+
+        Verify.objects.create(
+            code=code,
+            user=self,
+            verify_type=verify_type
+        )
+
+
     def save(self, *args, **kwargs):
         self.check_username()
         self.check_pass()
         self.hashing_pass()
         self.email_normalize()
         return super().save(*args, **kwargs)
-        
+
+
+class Verify(BaseModel):
+    VERIFY_TYPE = (
+        (VIA_EMAIL, VIA_EMAIL),
+        (VIA_PHONE, VIA_PHONE)
+    )
+
+    verify_type = models.CharField(max_length=20, choices=VERIFY_TYPE)
+    used = models.BooleanField(default=False)
+    expire_time = models.DateTimeField()
+    code = models.CharField(max_length=4)
+    user = models.ForeignKey(ProfileUser, on_delete=models.CASCADE, related_name='codes')
+
+    def __str__(self):
+        return f"{self.user.username}---{self.code}"
+
+    def save(self, *args, **kwargs):
+        if self.verify_type ==VIA_EMAIL:
+            self.expire_time = datetime.now() + timedelta(minutes=EMAIL_EXPIRE_TIME)
+        else:
+            self.expire_time = datetime.now() + timedelta(minutes=PHONE_EXPIRE_TIME)   
+        super().save(*args, **kwargs)
+
+
+class Hisob(BaseModel): #accounts
+    user = models.ForeignKey(ProfileUser, on_delete=models.CASCADE, related_name='accounts')
+    name = models.CharField(max_length=100)
+    balance = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    currency = models.CharField(max_length=10, default='UZS')
+
+    def __str__(self):
+        return f"{self.name} ({self.balance} {self.currency})"
+
+
+class Kirimlar(BaseModel): # incomes
+    user = models.ForeignKey(ProfileUser, on_delete=models.CASCADE, related_name='incomes')
+    account = models.ForeignKey(Hisob, on_delete=models.CASCADE, related_name='incomes')
+    title = models.CharField(max_length=255)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.title} - {self.amount} ({self.account.name})"
+
+
+class Chiqimlar(BaseModel): #expenses
+    user = models.ForeignKey(ProfileUser, on_delete=models.CASCADE, related_name='expenses')
+    account = models.ForeignKey(Hisob, on_delete=models.CASCADE, related_name='expenses')
+    title = models.CharField(max_length=255)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    description = models.TextField(blank=True, null=True)
+
+    
+
+
+
