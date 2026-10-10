@@ -4,7 +4,7 @@ from django.db.models import Q
 
 from base.utils import send_eemail_code, email_phone_regex, validate_username
 
-from .models import ProfileUser, VIA_EMAIL, VIA_PHONE, DONE, PHOTO_DONE
+from .models import ProfileUser, Hisob, Kirimlar, Chiqimlar, VIA_EMAIL, VIA_PHONE, DONE, PHOTO_DONE
 
 class SignUpSerializer(serializers.ModelSerializer):
     email_or_phone_number = serializers.CharField(write_only=True)
@@ -84,3 +84,40 @@ class SignUpSerializer(serializers.ModelSerializer):
 
 class VerifySerializer(serializers.Serializer):
     code = serializers.CharField(max_leng=4, required=True)
+
+
+class AccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hisob
+        fields = ['id', 'name', 'balance', 'currency', 'created_at', 'update_at']
+        read_only_fields = ['id', 'created_at', 'update_at']
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        validated_data['user'] = request.user
+        return super().create(validated_data)
+
+
+class IncomeSerializer(serializers.ModelSerializer):
+    class Mete:
+        model = Kirimlar
+        fields = ['id', 'account', 'title', 'amount', 'description', 'created_at', 'update_at']
+        read_only_fields = ['id', 'created_at', 'update_at']
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        validated_data['user'] = request.user
+        return super().create(validated_data)
+
+
+class ExpenseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chiqimlar
+        fields = ['id', 'account', 'title', 'amount', 'description', 'created_at', 'update_at']
+        read_only_fields = ['id', 'created_at', 'update_at']
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        validated_data['user'] = request.user
+        return super().create(validated_data)
+        
