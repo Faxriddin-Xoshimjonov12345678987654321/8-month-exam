@@ -159,4 +159,4 @@ class ExpenseSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         validated_data['user'] = request.user
         return super().create(validated_data)
-        
+
