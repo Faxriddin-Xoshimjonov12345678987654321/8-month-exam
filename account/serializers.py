@@ -169,7 +169,9 @@ class AccountTypeSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         user = self.context['request'].user
-        if HisobTurlari.objects.filter(user=user, name__iexact=attrs).exists():
+        name = attrs.get('name')
+
+        if HisobTurlari.objects.filter(user=user, name__iexact=name).exists():
             raise ValidationError('Bunday nomdagi hisob allaqachon mavjud')
 
         return attrs
@@ -183,7 +185,9 @@ class IncomesTypeSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         user = self.context['request'].user
-        if KirimTurlari.objects.filter(user=user, name__iexact=attrs).exists():
+        name = attrs.get('name')
+        
+        if KirimTurlari.objects.filter(user=user, name__iexact=name).exists():
             raise ValidationError('Bunday nomdagi kirim turi allaqachon mavjud')
 
         return attrs
@@ -197,7 +201,9 @@ class ExpensesTypeSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         user = self.context['request'].user
-        if ChiqimlarTurlar.objects.filter(user=user, name__iexact=attrs).exists():
+        name = attrs.get('name')
+
+        if ChiqimlarTurlar.objects.filter(user=user, name__iexact=name).exists():
             raise ValidationError('Bunday nomdagi chiqim turlari allaqachon mavjud')
 
         return attrs    
