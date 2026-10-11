@@ -148,7 +148,32 @@ class Chiqimlar(BaseModel): #expenses
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     description = models.TextField(blank=True, null=True)
 
-    
+    def __str__(self):
+            return f"{self.title} - {self.amount} ({self.account.name})"
 
+
+class HisobTurlari(models.Model):
+    user = models.ForeignKey(ProfileUser, on_delete=models.CASCADE, related_name='hisob_turlari')
+    name = models.CharField(max_length=25)
+
+    def __str__(self):
+        return self.name
+
+
+class KirimTurlari(models.Model):
+    user = models.ForeignKey(ProfileUser, on_delete=models.CASCADE, related_name='kirim_turlari')
+    name = models.CharField(max_length=25)
+
+    def __str__(self):
+        return self.name
+
+
+class ChiqimlarTurlar(models.Model):
+    user = models.ForeignKey(ProfileUser, on_delete=models.CASCADE, related_name='chiqim_turlari')
+    name = models.CharField(max_length=25)
+
+    def __str__(self):
+        return self.name
+    
 
 

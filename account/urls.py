@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
-from .views import SignUpView, VerifyView, AccountCreateView, AccountList, UpdateUserView, IncomeCreateView, IncomeListView, IncomeUpdateView, IncomePartialUpdateView, IncomeDeleteView
+from .views import SignUpView, VerifyView, AccountCreateView, AccountList, UpdateUserView, IncomeCreateView, IncomeListView, IncomeUpdateView, IncomePartialUpdateView, IncomeDeleteView, ExpenseCreateView, ExpenseListView, ExpenseUpdateView, ExpensePartialUpdateView, ExpenseDeleteView
 
 urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),
@@ -15,4 +15,10 @@ urlpatterns = [
     path('incomes_update/<int:pk>/update/', IncomeUpdateView.as_view(), name='income-update'),
     path('incomes_partial_update/<int:pk>/partial-update/', IncomePartialUpdateView.as_view(), name='income-partial-update'),
     path('incomes_delete/<int:pk>/delete/', IncomeDeleteView.as_view(), name='income-delete'),
+
+    path('expenses_create/', ExpenseCreateView.as_view(), name='expense-create'),
+    path('expenses_list/', ExpenseListView.as_view(), name='expense-list'),
+    path('expenses_update/<int:pk>/update/', ExpenseUpdateView.as_view(), name='expense-update'),
+    path('expenses_partial_update/<int:pk>/partial-update/', ExpensePartialUpdateView.as_view(), name='expense-partial-update'),
+    path('expenses_delete/<int:pk>/delete/', ExpenseDeleteView.as_view(), name='expense-delete'),
 ]
