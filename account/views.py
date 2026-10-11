@@ -170,3 +170,79 @@ class IncomeDeleteView(GenericAPIView):
         income.delete()
 
         return Response({}, status=status.HTTP_200_OK)
+
+
+class ExpenseCreateView(GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ExpenseSerializer
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data)
+
+
+class ExpenseListView(GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ExpenseSerializer
+    queryset  = Chiqimlar.objects.all()
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def get(self, request):
+        expenses = self.get_queryset()
+        serializer = self.get_serializer(expenses, many=True)
+
+        return Response(serializer.data)
+
+
+class ExpenseUpdateView(GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ExpenseSerializer
+    queryset = Chiqimlar.objects.all()
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def put(self, request, pk):
+        expense = self.get_object()
+        serializer = self.get_serializer(instance=expense, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data)
+
+    
+class ExpensePartialUpdateView(GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ExpenseSerializer
+    queryset = Chiqimlar.objects.all()
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def patch(self, request, pk):
+        expense = self.get_object()
+        serializer = self.get_serializer(instance=expense, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data)
+
+
+class ExpenseDeleteView(GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = Chiqimlar.objects.all()
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def delete(self, request, pk):
+        expense = self.get_object()
+
+        expense.delete()
+
+        return Response({}, status=status.HTTP_200_OK)
