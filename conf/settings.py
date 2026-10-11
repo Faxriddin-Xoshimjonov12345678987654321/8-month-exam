@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
 
     'account',
-    'base'
+    'base',
+    # 'drf-yasg',
+    'drf_spectacular'
 ]
 
 MIDDLEWARE = [
@@ -135,10 +137,19 @@ STATIC_URL = 'static/'
 
 
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 

@@ -128,7 +128,7 @@ class VerifySerializer(serializers.Serializer):
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hisob
-        fields = ['id', 'name', 'balance', 'currency', 'created_at', 'update_at']
+        fields = ['id', 'user', 'name', 'balance']
         read_only_fields = ['id', 'created_at', 'update_at']
 
     def create(self, validated_data):
@@ -140,8 +140,8 @@ class AccountSerializer(serializers.ModelSerializer):
 class IncomeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Kirimlar
-        fields = ['id', 'account', 'title', 'amount', 'description', 'created_at', 'update_at']
-        read_only_fields = ['id', 'created_at', 'update_at']
+        fields = ['id', 'account', 'title', 'amount', 'description']
+        read_only_fields = ['id']
 
     def create(self, validated_data):
         request = self.context.get('request')
@@ -152,8 +152,8 @@ class IncomeSerializer(serializers.ModelSerializer):
 class ExpenseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chiqimlar
-        fields = ['id', 'account', 'title', 'amount', 'description', 'created_at', 'update_at']
-        read_only_fields = ['id', 'created_at', 'update_at']
+        fields = ['id', 'amount', 'description']
+        read_only_fields = ['id']
 
     def create(self, validated_data):
         request = self.context.get('request')
@@ -223,5 +223,4 @@ class HisoblarSerializer(serializers.ModelSerializer):
             raise ValidationError('Bunday nomdagi hisob allaqachon mavjud')
 
         return attrs
-
 

@@ -310,6 +310,7 @@ class AccountTypeUpdateAPIView(GenericAPIView):
 class AccountTypeDeleteAPIView(GenericAPIView):
   permission_classes = [permissions.IsAuthenticated]
   queryset = HisobTurlari.objects.all()
+  serializer_class = AccountTypeSerializer
 
   def get_queryset(self):
     return self.queryset.filter(user=self.request.user)
