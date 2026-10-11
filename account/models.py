@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from conf.settings import EMAIL_EXPIRE_TIME, PHONE_EXPIRE_TIME
@@ -175,6 +176,14 @@ class ChiqimlarTurlar(models.Model):
     def __str__(self):
         return self.name
 
+User = get_user_model()
+class Hisoblar(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hisoblar')
+    name = models.CharField(max_length=255)
+    balance = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    account_type = models.ForeignKey('HisobTurlari', on_delete=models.SET_NULL, null=True, blank=True)
+    currency = models.CharField(max_length=10, default='UZS')
 
-
+    def __str__(self):
+        return f"{self.name} - {self.balance}"
 

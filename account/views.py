@@ -4,8 +4,8 @@ from rest_framework import status
 from rest_framework import permissions
 from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
-from .serializers import SignUpSerializer, VerifySerializer, AccountSerializer, IncomeSerializer, ExpenseSerializer, UpdateUserSerializer, AccountTypeSerializer, IncomesTypeSerializer, ExpensesTypeSerializer
-from .models import ProfileUser, Verify, NEW, DONE, Kirimlar, Chiqimlar, Hisob, HisobTurlari, KirimTurlari, ChiqimlarTurlar
+from .serializers import SignUpSerializer, VerifySerializer, AccountSerializer, IncomeSerializer, ExpenseSerializer, UpdateUserSerializer, AccountTypeSerializer, IncomesTypeSerializer, ExpensesTypeSerializer, HisoblarSerializer
+from .models import ProfileUser, Verify, NEW, DONE, Kirimlar, Chiqimlar, Hisob, HisobTurlari, KirimTurlari, ChiqimlarTurlar, Hisoblar
 from datetime import datetime
 # Create your views here.
 
@@ -462,3 +462,71 @@ class ExpensesTypeDeleteAPIView(GenericAPIView):
     expenses_type = self.get_object()
     expenses_type.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class HisoblarListAPIView(GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = HisoblarSerializer
+    queryset = Hisoblar.objects.all()
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def get(self, request):
+        hisoblar = self.get_queryset()
+        serializer = self.get_serializer(hisoblar, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class HisoblarCreateAPIView(GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = HisoblarSerializer
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class HisoblarRetrieveAPIView(GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = HisoblarSerializer
+    queryset = Hisoblar.objects.all()
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def get(self, request, pk=None):
+        hisob = self.get_object()
+        serializer = self.get_serializer(hisob)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class HisoblarUpdateAPIView(GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = HisoblarSerializer
+    queryset = Hisoblar.objects.all()
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def put(self, request, pk=None):
+        hisob = self.get_object()
+        serializer = self.get_serializer(hisob, data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class HisoblarDeleteAPIView(GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = Hisoblar.objects.all()
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def delete(self, request, pk=None):
+        hisob = self.get_object()
+        hisob.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

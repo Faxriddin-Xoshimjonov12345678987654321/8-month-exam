@@ -4,7 +4,7 @@ from django.db.models import Q
 
 from base.utils import send_eemail_code, email_phone_regex, validate_username
 
-from .models import ProfileUser, Hisob, Kirimlar, Chiqimlar, VIA_EMAIL, VIA_PHONE, DONE, PHOTO_DONE, HisobTurlari, KirimTurlari, ChiqimlarTurlar
+from .models import ProfileUser, Hisob, Kirimlar, Chiqimlar, VIA_EMAIL, VIA_PHONE, DONE, PHOTO_DONE, HisobTurlari, KirimTurlari, ChiqimlarTurlar, Hisoblar
 
 class SignUpSerializer(serializers.ModelSerializer):
     email_or_phone_number = serializers.CharField(write_only=True)
@@ -207,6 +207,19 @@ class ExpensesTypeSerializer(serializers.ModelSerializer):
             raise ValidationError('Bunday nomdagi chiqim turlari allaqachon mavjud')
 
         return attrs    
+
+
+class HisoblarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hisoblar
+        fields = ['id', 'name', 'balance', 'account_type', 'currency']
+        read_only_fields = ['id']
+
+    def validate(self, attrs):
+        user = self.context['request'].user
+        name = attrs.get('name')
         
-        
-        
+        if name and Hisoblar.objects.filter(user=user, name__iexact=name).exists():
+            raise ValidationError('Bunday nomdagi hisob allaqachon mavjud')
+
+        return attrs
