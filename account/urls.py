@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
-from .views import SignUpView, VerifyView, AccountCreateView, AccountList, UpdateUserView, IncomeCreateView, IncomeListView, IncomeUpdateView, IncomePartialUpdateView, IncomeDeleteView, ExpenseCreateView, ExpenseListView, ExpenseUpdateView, ExpensePartialUpdateView, ExpenseDeleteView, AccountTypeListAPIView, AccountTypeCreateAPIView, AccountTypeRetrieveAPIView, AccountTypeUpdateAPIView, AccountTypeDeleteAPIView, IncomesTypeListAPIView, IncomesTypeCreateAPIView, IncomesTypeRetrieveAPIView, IncomesTypeUpdateAPIView, IncomesTypeDeleteAPIView, ExpensesTypeListAPIView, ExpensesTypeCreateAPIView, ExpensesTypeRetrieveAPIView, ExpensesTypeUpdateAPIView, ExpensesTypeDeleteAPIView
+from .views import SignUpView, VerifyView, AccountCreateView, AccountList, UpdateUserView, IncomeCreateView, IncomeListView, IncomeUpdateView, IncomePartialUpdateView, IncomeDeleteView, ExpenseCreateView, ExpenseListView, ExpenseUpdateView, ExpensePartialUpdateView, ExpenseDeleteView, AccountTypeListAPIView, AccountTypeCreateAPIView, AccountTypeRetrieveAPIView, AccountTypeUpdateAPIView, AccountTypeDeleteAPIView, IncomesTypeListAPIView, IncomesTypeCreateAPIView, IncomesTypeRetrieveAPIView, IncomesTypeUpdateAPIView, IncomesTypeDeleteAPIView, ExpensesTypeListAPIView, ExpensesTypeCreateAPIView, ExpensesTypeRetrieveAPIView, ExpensesTypeUpdateAPIView, ExpensesTypeDeleteAPIView, HisoblarListAPIView, HisoblarCreateAPIView, HisoblarRetrieveAPIView, HisoblarUpdateAPIView,HisoblarDeleteAPIView, DashboardAPIView
 
 urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),
@@ -39,4 +39,12 @@ urlpatterns = [
     path('expenses_types_detail/<int:pk>/', ExpensesTypeRetrieveAPIView.as_view(), name='expenses-types-detail'),
     path('expenses_types_update/<int:pk>/update/', ExpensesTypeUpdateAPIView.as_view(), name='expenses-types-update'),
     path('expenses_types_delete/<int:pk>/delete/', ExpensesTypeDeleteAPIView.as_view(), name='expenses-types-delete'),
+
+    path('hisoblar/', HisoblarListAPIView.as_view(), name='hisoblar-list'),
+    path('hisoblar/create/', HisoblarCreateAPIView.as_view(), name='hisoblar-create'),
+    path('hisoblar/<int:pk>/', HisoblarRetrieveAPIView.as_view(), name='hisoblar-detail'),
+    path('hisoblar/<int:pk>/update/', HisoblarUpdateAPIView.as_view(), name='hisoblar-update'),
+    path('hisoblar/<int:pk>/delete/', HisoblarDeleteAPIView.as_view(), name='hisoblar-delete'),
+
+    path('dashboard/', DashboardAPIView.as_view(), name='dashboard')
 ]

@@ -210,7 +210,7 @@ class ExpensesTypeSerializer(serializers.ModelSerializer):
 
 
 class HisoblarSerializer(serializers.ModelSerializer):
-    class Meta:
+    class Meta: 
         model = Hisoblar
         fields = ['id', 'name', 'balance', 'account_type', 'currency']
         read_only_fields = ['id']
@@ -223,3 +223,5 @@ class HisoblarSerializer(serializers.ModelSerializer):
             raise ValidationError('Bunday nomdagi hisob allaqachon mavjud')
 
         return attrs
+
+

@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
 from rest_framework.exceptions import ValidationError
-from rest_framework.views import APIView
+from django.db.models import Sum
 from .serializers import SignUpSerializer, VerifySerializer, AccountSerializer, IncomeSerializer, ExpenseSerializer, UpdateUserSerializer, AccountTypeSerializer, IncomesTypeSerializer, ExpensesTypeSerializer, HisoblarSerializer
 from .models import ProfileUser, Verify, NEW, DONE, Kirimlar, Chiqimlar, Hisob, HisobTurlari, KirimTurlari, ChiqimlarTurlar, Hisoblar
 from datetime import datetime
@@ -530,3 +530,21 @@ class HisoblarDeleteAPIView(GenericAPIView):
         hisob = self.get_object()
         hisob.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+class DashboardAPIView(GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        
+        total_balance = Hisoblar.objects.filter(user=user).aggregate(sum=Sum('balance'))['sum'] or 0.00
+        total_income = Kirimlar.objects.filter(user=user).aggregate(sum=Sum('amount'))['sum'] or 0.00
+        total_expense = Chiqimlar.objects.filter(user=user).aggregate(sum=Sum('amount'))['sum'] or 0.00
+        
+        data = {
+            'total_balance': total_balance,
+            'total_income': total_income,
+            'total_expense': total_expense
+        }
+        return Response(data, status=status.HTTP_200_OK)
