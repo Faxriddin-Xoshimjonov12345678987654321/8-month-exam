@@ -4,7 +4,7 @@ from django.db.models import Q
 
 from base.utils import send_eemail_code, email_phone_regex, validate_username
 
-from .models import ProfileUser, Hisob, Kirimlar, Chiqimlar, VIA_EMAIL, VIA_PHONE, DONE, PHOTO_DONE
+from .models import ProfileUser, Hisob, Kirimlar, Chiqimlar, VIA_EMAIL, VIA_PHONE, DONE, PHOTO_DONE, HisobTurlari, KirimTurlari, ChiqimlarTurlar
 
 class SignUpSerializer(serializers.ModelSerializer):
     email_or_phone_number = serializers.CharField(write_only=True)
@@ -160,3 +160,47 @@ class ExpenseSerializer(serializers.ModelSerializer):
         validated_data['user'] = request.user
         return super().create(validated_data)
 
+
+class AccountTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HisobTurlari
+        fields = ['id', 'name']
+        read_only_fields = ['id']
+
+    def validate(self, attrs):
+        user = self.context['request'].user
+        if HisobTurlari.objects.filter(user=user, name__iexact=attrs).exists():
+            raise ValidationError('Bunday nomdagi hisob allaqachon mavjud')
+
+        return attrs
+
+
+class IncomesTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = KirimTurlari
+        fields = ['id', 'name']
+        read_only_fields = ['id']
+
+    def validate(self, attrs):
+        user = self.context['request'].user
+        if KirimTurlari.objects.filter(user=user, name__iexact=attrs).exists():
+            raise ValidationError('Bunday nomdagi kirim turi allaqachon mavjud')
+
+        return attrs
+
+
+class ExpensesTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChiqimlarTurlar
+        fields = ['id', 'name']
+        read_only_fields = ['id']
+
+    def validate(self, attrs):
+        user = self.context['request'].user
+        if ChiqimlarTurlar.objects.filter(user=user, name__iexact=attrs).exists():
+            raise ValidationError('Bunday nomdagi chiqim turlari allaqachon mavjud')
+
+        return attrs    
+        
+        
+        
