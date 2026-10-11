@@ -248,30 +248,31 @@ class ExpenseDeleteView(GenericAPIView):
         return Response({}, status=status.HTTP_200_OK)
 
 
+class AccountTypeListAPIView(GenericAPIView):
+  permission_classes = [permissions.IsAuthenticated]
+  serializer_class = AccountTypeSerializer
+  queryset = HisobTurlari.objects.all()
+
+  def get_queryset(self):
+    return self.queryset.filter(user=self.request.user)
+
+  def get(self, request):
+    account_types = self.get_queryset()
+    serializer = self.get_serializer(account_types, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class AccountTypeCreateAPIView(GenericAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = AccountTypeSerializer
-    def post(self, request):
-        serializer = self.get_serializer(
+  permission_classes = [permissions.IsAuthenticated]
+  serializer_class = AccountTypeSerializer
+
+  def post(self, request):
+    serializer = self.get_serializer(
         data=request.data, context={"request": request}
     )
-        serializer.is_valid(raise_exception=True)
-        serializer.save(user=request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-class AccountTypeListAPIView(GenericAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = AccountTypeSerializer
-    queryset = HisobTurlari.objects.all()
-
-    def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
-
-    def get(self, request):
-        account_type = self.get_queryset()
-        serializer = self.get_serializer(account_type, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(user=request.user)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class AccountTypeRetrieveAPIView(GenericAPIView):
@@ -283,8 +284,8 @@ class AccountTypeRetrieveAPIView(GenericAPIView):
     return self.queryset.filter(user=self.request.user)
 
   def get(self, request, pk=None):
-    instance = self.get_object()
-    serializer = self.get_serializer(instance)
+    account_type = self.get_object()
+    serializer = self.get_serializer(account_type)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -297,9 +298,9 @@ class AccountTypeUpdateAPIView(GenericAPIView):
     return self.queryset.filter(user=self.request.user)
 
   def put(self, request, pk=None):
-    instance = self.get_object()
+    account_type = self.get_object()
     serializer = self.get_serializer(
-        instance, data=request.data, context={"request": request}
+        account_type, data=request.data, context={"request": request}
     )
     serializer.is_valid(raise_exception=True)
     serializer.save()
@@ -308,13 +309,156 @@ class AccountTypeUpdateAPIView(GenericAPIView):
 
 class AccountTypeDeleteAPIView(GenericAPIView):
   permission_classes = [permissions.IsAuthenticated]
-  serializer_class = AccountTypeSerializer
   queryset = HisobTurlari.objects.all()
 
   def get_queryset(self):
     return self.queryset.filter(user=self.request.user)
 
   def delete(self, request, pk=None):
-    instance = self.get_object()
-    instance.delete()
+    account_type = self.get_object()
+    account_type.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class IncomesTypeListAPIView(GenericAPIView):
+  permission_classes = [permissions.IsAuthenticated]
+  serializer_class = IncomesTypeSerializer
+  queryset = KirimTurlari.objects.all()
+
+  def get_queryset(self):
+    return self.queryset.filter(user=self.request.user)
+
+  def get(self, request):
+    incomes_types = self.get_queryset()
+    serializer = self.get_serializer(incomes_types, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class IncomesTypeCreateAPIView(GenericAPIView):
+  permission_classes = [permissions.IsAuthenticated]
+  serializer_class = IncomesTypeSerializer
+
+  def post(self, request):
+    serializer = self.get_serializer(
+        data=request.data, context={"request": request}
+    )
+    serializer.is_valid(raise_exception=True)
+    serializer.save(user=request.user)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class IncomesTypeRetrieveAPIView(GenericAPIView):
+  permission_classes = [permissions.IsAuthenticated]
+  serializer_class = IncomesTypeSerializer
+  queryset = KirimTurlari.objects.all()
+
+  def get_queryset(self):
+    return self.queryset.filter(user=self.request.user)
+
+  def get(self, request, pk=None):
+    incomes_type = self.get_object()
+    serializer = self.get_serializer(incomes_type)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class IncomesTypeUpdateAPIView(GenericAPIView):
+  permission_classes = [permissions.IsAuthenticated]
+  serializer_class = IncomesTypeSerializer
+  queryset = KirimTurlari.objects.all()
+
+  def get_queryset(self):
+    return self.queryset.filter(user=self.request.user)
+
+  def put(self, request, pk=None):
+    incomes_type = self.get_object()
+    serializer = self.get_serializer(
+        incomes_type, data=request.data, context={"request": request}
+    )
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class IncomesTypeDeleteAPIView(GenericAPIView):
+  permission_classes = [permissions.IsAuthenticated]
+  queryset = KirimTurlari.objects.all()
+
+  def get_queryset(self):
+    return self.queryset.filter(user=self.request.user)
+
+  def delete(self, request, pk=None):
+    incomes_type = self.get_object()
+    incomes_type.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ExpensesTypeListAPIView(GenericAPIView):
+  permission_classes = [permissions.IsAuthenticated]
+  serializer_class = ExpensesTypeSerializer
+  queryset = ChiqimlarTurlar.objects.all()
+
+  def get_queryset(self):
+    return self.queryset.filter(user=self.request.user)
+
+  def get(self, request):
+    expenses_types = self.get_queryset()
+    serializer = self.get_serializer(expenses_types, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ExpensesTypeCreateAPIView(GenericAPIView):
+  permission_classes = [permissions.IsAuthenticated]
+  serializer_class = ExpensesTypeSerializer
+
+  def post(self, request):
+    serializer = self.get_serializer(
+        data=request.data, context={"request": request}
+    )
+    serializer.is_valid(raise_exception=True)
+    serializer.save(user=request.user)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class ExpensesTypeRetrieveAPIView(GenericAPIView):
+  permission_classes = [permissions.IsAuthenticated]
+  serializer_class = ExpensesTypeSerializer
+  queryset = ChiqimlarTurlar.objects.all()
+
+  def get_queryset(self):
+    return self.queryset.filter(user=self.request.user)
+
+  def get(self, request, pk=None):
+    expenses_type = self.get_object()
+    serializer = self.get_serializer(expenses_type)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ExpensesTypeUpdateAPIView(GenericAPIView):
+  permission_classes = [permissions.IsAuthenticated]
+  serializer_class = ExpensesTypeSerializer
+  queryset = ChiqimlarTurlar.objects.all()
+
+  def get_queryset(self):
+    return self.queryset.filter(user=self.request.user)
+
+  def put(self, request, pk=None):
+    expenses_type = self.get_object()
+    serializer = self.get_serializer(
+        expenses_type, data=request.data, context={"request": request}
+    )
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ExpensesTypeDeleteAPIView(GenericAPIView):
+  permission_classes = [permissions.IsAuthenticated]
+  queryset = ChiqimlarTurlar.objects.all()
+
+  def get_queryset(self):
+    return self.queryset.filter(user=self.request.user)
+
+  def delete(self, request, pk=None):
+    expenses_type = self.get_object()
+    expenses_type.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
